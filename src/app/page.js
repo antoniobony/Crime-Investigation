@@ -3,9 +3,9 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
-  const [suspect] = useState(["antonio", "romario", "bony", "bruno", "sophie"]);
+  const [suspect] = useState(["john", "mary", "alice", "bruno", "sophie"]);
   const [crimeTypes] = useState(["vol", "assassinat", "escroquerie"]);
-  const [selectedSuspect, setSelectedSuspect] = useState("antonio");
+  const [selectedSuspect, setSelectedSuspect] = useState("john");
   const [selectedCrime, setSelectedCrime] = useState("vol");
   const [clickedSuspect, setClickedSuspect] = useState(null);
   const [clickedCrime, setClickedCrime] = useState(null);
@@ -14,20 +14,20 @@ export default function Home() {
   
   const [facts] = useState({
     has_motive: {
-      antonio: ["vol"],
-      romario: ["assassinat"],
-      bony: ["escroquerie"],
+      john: ["vol"],
+      mary: ["assassinat"],
+      alice: ["escroquerie"],
     },
     was_near_crime_scene: {
-      antonio: ["vol"],
-      romario: ["assassinat"],
+      john: ["vol"],
+      mary: ["assassinat"],
     },
     has_fingerprint_on_weapon: {
-      antonio: ["vol"],
-      romario: ["assassinat"],
+      john: ["vol"],
+      mary: ["assassinat"],
     },
     has_bank_transaction: {
-      bony: ["escroquerie"],
+      alice: ["escroquerie"],
       bruno: ["escroquerie"],
     },
     owns_fake_identity: {
