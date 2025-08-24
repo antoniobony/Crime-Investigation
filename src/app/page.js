@@ -1,103 +1,201 @@
+"use client"
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [suspect] = useState(["john", "mary", "alice", "bruno", "sophie"]);
+  const [crimeTypes] = useState(["vol", "assassinat", "escroquerie"]);
+  const [selectedSuspect, setSelectedSuspect] = useState("john");
+  const [selectedCrime, setSelectedCrime] = useState("vol");
+  const [clickedSuspect, setClickedSuspect] = useState(null);
+  const [clickedCrime, setClickedCrime] = useState(null);
+  const [result, setResult] = useState(null);
+  const [showProofs, setShowProofs] = useState(false);
+  
+  const [facts] = useState({
+    has_motive: {
+      john: ["vol"],
+      mary: ["assassinat"],
+      alice: ["escroquerie"],
+    },
+    was_near_crime_scene: {
+      john: ["vol"],
+      mary: ["assassinat"],
+    },
+    has_fingerprint_on_weapon: {
+      john: ["vol"],
+      mary: ["assassinat"],
+    },
+    has_bank_transaction: {
+      alice: ["escroquerie"],
+      bruno: ["escroquerie"],
+    },
+    owns_fake_identity: {
+      sophie: ["escroquerie"],
+    },
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const hideProofs = () => {
+    setShowProofs(false);
+  };
+
+  const checkGuilt = () => {
+    const guilty = isGuilty(selectedSuspect, selectedCrime);
+    setResult(guilty);
+    setClickedSuspect(selectedSuspect);
+    setClickedCrime(selectedCrime);
+    setShowProofs(true);
+  };
+
+  const isGuilty = (suspect, crime) => {
+    let guilty = false;
+    if (crime === "vol") {
+      guilty =
+        facts.has_motive[suspect]?.includes(crime) &&
+        facts.was_near_crime_scene[suspect]?.includes(crime) &&
+        facts.has_fingerprint_on_weapon[suspect]?.includes(crime);
+    } else if (crime === "assassinat") {
+      guilty =
+        facts.has_motive[suspect]?.includes(crime) &&
+        facts.was_near_crime_scene[suspect]?.includes(crime) &&
+        (facts.has_fingerprint_on_weapon[suspect]?.includes(crime) || false);
+    } else if (crime === "escroquerie") {
+      guilty =
+        (facts.has_bank_transaction[suspect]?.includes(crime) ||
+          facts.owns_fake_identity[suspect]?.includes(crime)) &&
+        facts.has_motive[suspect]?.includes(crime);
+    }
+    return guilty;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+        <div className="flex flex-row justify-center">
+          <Image src="/assets/ia.gif" width={80} height={80} alt="iAPicture"/>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Criminal Detection System</h2>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Choose a Suspect</label>
+              <div className="relative">
+                <select
+                  className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-700 capitalize"
+                  value={selectedSuspect}
+                  onChange={(e) => {
+                    setSelectedSuspect(e.target.value);
+                    hideProofs();
+                  }}
+                >
+                  {suspect.map((sus) => (
+                    <option key={sus} value={sus} className="capitalize">
+                      {sus}
+                    </option>
+                  ))}
+                </select>
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Choose a Crime Type</label>
+              <div className="relative">
+                <select
+                  className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-700 capitalize"
+                  value={selectedCrime}
+                  onChange={(e) => {
+                    setSelectedCrime(e.target.value);
+                    hideProofs();
+                  }}
+                >
+                  {crimeTypes.map((crime) => (
+                    <option key={crime} value={crime} className="capitalize">
+                      {crime}
+                    </option>
+                  ))}
+                </select>
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <button
+              className="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition duration-200 font-medium cursor-pointer"
+              onClick={checkGuilt}
+            >
+              Check Guilt
+            </button>
+
+            {showProofs && (
+              <div className={`p-4 rounded-lg ${result ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
+                <h3 className="font-semibold text-gray-800">Result: {result ? "Guilty" : "Not Guilty"}</h3>
+              </div>
+            )}
+
+            {showProofs && (
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Proofs for {clickedSuspect.charAt(0).toUpperCase() + clickedSuspect.slice(1)} ({clickedCrime.charAt(0).toUpperCase() + clickedCrime.slice(1)})</h3>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                  {clickedCrime === "vol" && (
+                    <>
+                      <li>Motive: {facts.has_motive[clickedSuspect]?.includes('vol') ? 'Yes' : 'No'}</li>
+                      <li>Near Crime Scene: {facts.was_near_crime_scene[clickedSuspect]?.includes('vol') ? 'Yes' : 'No'}</li>
+                      <li>Fingerprints on Weapon: {facts.has_fingerprint_on_weapon[clickedSuspect]?.includes('vol') ? 'Yes' : 'No'}</li>
+                    </>
+                  )}
+                  {clickedCrime === "assassinat" && (
+                    <>
+                      <li>Motive: {facts.has_motive[clickedSuspect]?.includes('assassinat') ? 'Yes' : 'No'}</li>
+                      <li>Near Crime Scene: {facts.was_near_crime_scene[clickedSuspect]?.includes('assassinat') ? 'Yes' : 'No'}</li>
+                      <li>Fingerprints on Weapon: {facts.has_fingerprint_on_weapon[clickedSuspect]?.includes('assassinat') ? 'Yes' : 'No'}</li>
+                    </>
+                  )}
+                  {clickedCrime === "escroquerie" && (
+                    <>
+                      <li>Motive: {facts.has_motive[clickedSuspect]?.includes('escroquerie') ? 'Yes' : 'No'}</li>
+                      <li>Bank Transactions: {facts.has_bank_transaction[clickedSuspect]?.includes('escroquerie') ? 'Yes' : 'No'}</li>
+                      <li>Fake Identity: {facts.owns_fake_identity[clickedSuspect]?.includes('escroquerie') ? 'Yes' : 'No'}</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Rules of Culpability</h3>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                <li><span className="font-medium">Vol:</span> Motive + Presence + Fingerprint</li>
+                <li><span className="font-medium">Assassinat:</span> Motive + Presence + (Fingerprint or Eyewitness)</li>
+                <li><span className="font-medium">Escroquerie:</span> Motive + (Bank Transaction or Fake Identity)</li>
+              </ul>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Group Members (M1 IG Group 1)</h3>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                <li><span className="font-medium">1268 H-F</span> RANDRIANARIVO Marius Narcisse</li>
+                <li><span className="font-medium">1186 H-F</span> RAKOTONIRINA Rado Leonce</li>
+                <li><span className="font-medium">1287 H-F</span> RAZAFIMIANDRISOARIVONY Onjanirina Théodose Lyoncia</li>
+                <li><span className="font-medium">1178 H-F</span> ANDRIANIRINA Romario Richard</li>
+                <li><span className="font-medium">1181 H-F</span> MIARINARIVONIRINA Manoela Jhonson</li>
+                <li><span className="font-medium">1191 H-F</span> RANDRIAMAMPIONONA Joharivola</li>
+                <li><span className="font-medium">1247 H-F</span> BAKARY Kodahy Antonio</li>
+                <li><span className="font-medium">1218 H-F</span> RAKOTONINDRINA Narindranjanahary</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
