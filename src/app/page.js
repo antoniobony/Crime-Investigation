@@ -3,9 +3,9 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
-  const [suspect] = useState(["john", "mary", "alice", "bruno", "sophie"]);
+  const [suspect] = useState(["antonio", "bony", "romario", "bruno", "julie"]);
   const [crimeTypes] = useState(["vol", "assassinat", "escroquerie"]);
-  const [selectedSuspect, setSelectedSuspect] = useState("john");
+  const [selectedSuspect, setSelectedSuspect] = useState("julie");
   const [selectedCrime, setSelectedCrime] = useState("vol");
   const [clickedSuspect, setClickedSuspect] = useState(null);
   const [clickedCrime, setClickedCrime] = useState(null);
